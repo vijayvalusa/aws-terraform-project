@@ -38,7 +38,7 @@ module "auto-scaling" {
   source = "./module/auto-scaling"
   private_subnet_ids = module.vpc.private_subnet_ids
   vpc_id = module.vpc.vpc_id
-  key_name = "vpc-1"
+  key_name = "vpc"
   ami = "ami-084568db4383264d4"
   instance_type = "t2.micro"
   target_group_arns = [module.alb.target_group_arn]
