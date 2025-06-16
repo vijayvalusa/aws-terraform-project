@@ -25,4 +25,10 @@ variable "subnet_id" {
   type = list(string)
 }
 
+variable "web_sg" {
+   description = "Value for Security Group"
+   type = list(string)
+  
+}
+
 

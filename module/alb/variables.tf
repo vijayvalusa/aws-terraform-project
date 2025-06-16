@@ -3,7 +3,22 @@ variable "vpc_id" {
   type = string
 }
 
-variable "public_subnet_ids" {
+variable "app_subnet_ids" {
+  description = "Value for the subnet"
+  type = list(string)
+}
+
+variable "web_subnet_ids" {
+  description = "Value for the subnet"
+  type = list(string)
+}
+
+variable "ilb_sg" {
+  description = "Value for the subnet"
+  type = list(string)
+}
+
+variable "alb_sg" {
   description = "Value for the subnet"
   type = list(string)
 }

@@ -1,65 +1,83 @@
-resource "aws_security_group" "asg_sg" {
-  name        = "asg-sg"
-  description = "Allow HTTP"
-  vpc_id      = var.vpc_id
-
-  ingress {
-    description = "SSH access"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Be careful using this in production
-  }
-
-  ingress {
-    from_port   = 8000
-    to_port     = 8000
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  tags = {
-    Name = "asg-security-group"
-  }
-
-
+locals {
+  instance_type = "t2.micro"
 }
 
 
-resource "aws_launch_template" "web_template" {
-  name_prefix   = "web-"
+resource "aws_launch_template" "app_template" {
+  name_prefix   = "app-"
   image_id      = var.ami           # e.g., Ubuntu AMI
-  instance_type = "t2.micro"
+  instance_type = local.instance_type
   key_name      = var.key_name
 
   network_interfaces {
     associate_public_ip_address = false
-    security_groups             = [aws_security_group.asg_sg.id]
+    security_groups             = var.app_sg
   }
 
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name = "web-asg-instance"
+      Name = "app-server"
     }
   }
 }
 
+resource "aws_launch_template" "web_template" {
+  name_prefix   = "web-"
+  image_id      = var.ami           # e.g., Ubuntu AMI
+  instance_type = local.instance_type
+  key_name      = var.key_name
 
-resource "aws_autoscaling_group" "web_asg" {
-  name  =   "aws-prod-demo"
+  network_interfaces {
+    associate_public_ip_address = false
+    security_groups             = var.web_sg
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "web-server"
+    }
+  }
+}
+
+resource "aws_autoscaling_group" "app_asg" {
+  name  =   "aws-prod-app-asg"
   desired_capacity     = 2
   max_size             = 3
   min_size             = 1
-  vpc_zone_identifier  = var.private_subnet_ids   # List of subnets
+  vpc_zone_identifier  = var.app_subnet_ids   # List of subnets
+
   health_check_type    = "EC2"
-  target_group_arns   = var.target_group_arns                    # Optional: for ALB
+  target_group_arns   = var.target_app_group_arns                    # Optional: for ALB
+  health_check_grace_period = 300
+  termination_policies      = ["OldestInstance"]
+
+  launch_template {
+    id      = aws_launch_template.app_template.id
+    version = "$Latest"
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "app-asg"
+    propagate_at_launch = true
+  }
+}
+
+
+
+resource "aws_autoscaling_group" "web_asg" {
+  name  =   "aws-prod-web-asg"
+  desired_capacity     = 2
+  max_size             = 3
+  min_size             = 1
+  vpc_zone_identifier  = var.web_subnet_ids   # List of subnets
+  health_check_type    = "EC2"
+  target_group_arns   = var.target_web_group_arns                 # Optional: for ALB
+  health_check_grace_period = 300
+  termination_policies      = ["OldestInstance"]
+
   launch_template {
     id      = aws_launch_template.web_template.id
     version = "$Latest"
@@ -71,4 +89,6 @@ resource "aws_autoscaling_group" "web_asg" {
     propagate_at_launch = true
   }
 }
+
+
 
