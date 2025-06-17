@@ -42,6 +42,11 @@ module "sg"{
   vpc_id = module.vpc.vpc_id
 }
 
+module "iam" {
+  source = "./module/iam"
+  role_name = "s3Readonlyaccess"
+}
+
 module "rds" {
   source = "./module/rds"
   vpc_id = module.vpc.vpc_id
@@ -71,6 +76,13 @@ module "auto-scaling" {
   app_subnet_ids =   module.vpc.app_subnet_ids
   web_subnet_ids =  module.vpc.web_subnet_ids
   key_name = "vpc"
+  db_endpoint = module.rds.rds_host
+  db_username = "admin"
+  db_password = "Vijay1234"
+  s3_bucket = "app2-workbook-example.com"
+  alb_dns = module.alb.alb_dns
+  profilename = module.iam.instance_profile_name
+
 }
 
 module "bastion-server" {
