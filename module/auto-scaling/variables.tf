@@ -45,3 +45,33 @@ variable "web_sg" {
   type = list(string)
   
 }
+
+variable "db_username" {
+  description = "Value of db username"
+  type = string
+}
+
+variable "db_password" {
+  description = "Value of db password"
+  type = string
+}
+
+variable "db_endpoint" {
+  description = "RDS endpoint to be passed into user_data script"
+  type        = string
+}
+
+variable "alb_dns" {
+  description = "RDS endpoint to be passed into user_data script"
+  type        = string
+}
+
+variable "profilename" {
+  description = "value of policy name"
+  type = string
+}
+
+variable "s3_bucket" {
+  description = "value of policy name"
+  type = string
+}

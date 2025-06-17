@@ -9,6 +9,17 @@ resource "aws_launch_template" "app_template" {
   instance_type = local.instance_type
   key_name      = var.key_name
 
+  user_data = base64encode(templatefile("${path.module}/scripts/app.sh", {
+    db_username = var.db_username,
+    db_password = var.db_password,
+    db_endpoint = var.db_endpoint  # or var.db_endpoint
+    s3_bucket   = var.s3_bucket
+  }))
+
+  iam_instance_profile {
+    name = var.profilename
+  }
+  
   network_interfaces {
     associate_public_ip_address = false
     security_groups             = var.app_sg
@@ -28,6 +39,14 @@ resource "aws_launch_template" "web_template" {
   instance_type = local.instance_type
   key_name      = var.key_name
 
+  user_data = base64encode(templatefile("${path.module}/scripts/web.sh", {
+     s3_bucket   = var.s3_bucket
+     alb_dns = var.alb_dns
+  }))
+
+  iam_instance_profile {
+    name = var.profilename
+  }
   network_interfaces {
     associate_public_ip_address = false
     security_groups             = var.web_sg
