@@ -75,10 +75,10 @@ log "ERROR: Failed to copy app code from S3"
 cd app-tier
 cat > DbConfig.js <<EOF
 module.exports = {
-  HOST: "${db_endpoint}",
-  USER: "${db_username}",
-  PASSWORD: "${db_password}",
-  DB: "webappdb"
+  DB_HOST: "${db_endpoint}",
+  DB_USER: "${db_username}",
+  DB_PWD: "${db_password}",
+  DB_DATABASE: "webappdb"
 };
 EOF
 log "DbConfig.js written"

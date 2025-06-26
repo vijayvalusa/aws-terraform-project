@@ -10,3 +10,9 @@ output "db_subnet_ids" {
   value = module.vpc.db_subnet_ids
 }
 
+output "bastion_IP" {
+  value =  module.bastion-server.bastion_public_ip
+}
+
+
+

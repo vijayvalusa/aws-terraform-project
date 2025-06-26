@@ -22,3 +22,15 @@ variable "alb_sg" {
   description = "Value for the subnet"
   type = list(string)
 }
+
+//variable "certificate_arn" {
+  //description = "ACM Certificate ARN for HTTPS"
+  //type        = string
+//}
+
+
+variable "domain_name" {
+  description = "Domain name for the ACM certificate"
+  type        = string
+}
+

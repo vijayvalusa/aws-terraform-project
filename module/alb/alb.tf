@@ -6,7 +6,7 @@ resource "aws_lb_target_group" "app_tg" {
   vpc_id   = var.vpc_id
 
   health_check {
-    path                = "/"
+    path                = "/health"
     interval            = 30
     timeout             = 5
     healthy_threshold   = 3
@@ -23,7 +23,7 @@ resource "aws_lb_target_group" "app_tg" {
 #Create Application load balancer
 resource "aws_lb" "ilb" {
   name               = "app-ilb"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = var.ilb_sg
   subnets            = var.app_subnet_ids  # Ideally add at least two public subnets
@@ -78,13 +78,44 @@ resource "aws_lb" "alb" {
   }
 }
 
-resource "aws_lb_listener" "web_listener" {
+
+
+#ACM certificate
+resource "aws_lb_listener" "https" {
   load_balancer_arn = aws_lb.alb.arn
-  port              = 80
-  protocol          = "HTTP"
+
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   =  data.aws_acm_certificate.selected.arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.web_tg.arn
   }
 }
+
+
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.alb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+
+data "aws_acm_certificate" "selected" {
+  domain   = var.domain_name
+  statuses = ["ISSUED"]
+  most_recent = true
+}
+
+

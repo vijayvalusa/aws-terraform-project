@@ -41,14 +41,14 @@ resource "aws_launch_template" "web_template" {
 
   user_data = base64encode(templatefile("${path.module}/scripts/web.sh", {
      s3_bucket   = var.s3_bucket
-     alb_dns = var.alb_dns
+     alb_dns = var.ilb_dns
   }))
 
   iam_instance_profile {
     name = var.profilename
   }
   network_interfaces {
-    associate_public_ip_address = false
+    associate_public_ip_address = true
     security_groups             = var.web_sg
   }
 
