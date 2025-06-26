@@ -8,10 +8,6 @@
 # Crash logs
 crash.log
 
-# Terraform variable overrides
-*.tfvars
-*.tfvars.json
-
 # CLI configuration files
 .terraformrc
 terraform.rc
