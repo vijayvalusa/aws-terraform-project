@@ -61,7 +61,7 @@ variable "db_endpoint" {
   type        = string
 }
 
-variable "alb_dns" {
+variable "ilb_dns" {
   description = "RDS endpoint to be passed into user_data script"
   type        = string
 }

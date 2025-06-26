@@ -28,3 +28,7 @@ output "alb_zone_id" {
   description = "Returning Zone id"
   value = aws_lb.alb.zone_id
 }
+
+output "acm_certificate_arn" {
+  value = data.aws_acm_certificate.selected.arn
+}
