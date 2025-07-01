@@ -56,7 +56,7 @@ log "MySQL setup complete"
 # === Node/NVM/PM2 Setup ===
 export HOME=/root
 log "Installing Node.js, NVM, and PM2...$HOME"
-curl -o- https://raw.githubusercontent.com/avizway1/aws_3tier_architecture/main/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 source "$NVM_DIR/nvm.sh"
 nvm install 16
