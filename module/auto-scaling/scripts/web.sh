@@ -41,7 +41,7 @@ log "Installing Node.js, NVM, and PM2 for ubuntu user..."
 sudo -i -u ubuntu bash <<'EOF'
 cd ~
 export NVM_DIR="$HOME/.nvm"
-curl -o- https://raw.githubusercontent.com/avizway1/aws_3tier_architecture/main/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 source "$NVM_DIR/nvm.sh"
 nvm install 16
 nvm use 16
